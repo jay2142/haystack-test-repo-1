@@ -11,21 +11,47 @@ jobs:
       - name: Trigger analysis
         id: trigger
         run: |
-          # Extract repository owner and name
-          REPO_FULL_NAME="${GITHUB_REPOSITORY}"
-          REPO_OWNER=$(echo $REPO_FULL_NAME | cut -d '/' -f 1)
-          REPO_NAME=$(echo $REPO_FULL_NAME | cut -d '/' -f 2)
+          # Use GitHub context variables directly
+          REPO_OWNER="${{ github.repository_owner }}"
+          REPO_NAME="${{ github.event.repository.name }}"
           PR_NUMBER="${{ github.event.pull_request.number }}"
           
-          # Make the initial API call
+          # Debug information
+          echo "Repository owner: $REPO_OWNER"
+          echo "Repository name: $REPO_NAME"
+          echo "PR number: $PR_NUMBER"
+          
+          # Make the initial API call with explicit error output
+          echo "Making API call to: https://8z9ssbamdj.execute-api.us-west-2.amazonaws.com/prod/${REPO_OWNER}/${REPO_NAME}/${PR_NUMBER}"
           RESPONSE=$(curl -s -X POST \
             "https://8z9ssbamdj.execute-api.us-west-2.amazonaws.com/prod/${REPO_OWNER}/${REPO_NAME}/${PR_NUMBER}" \
             -H "Content-Type: application/json" \
-            -d '{"aiAnalysisEnabled": true}')
+            -d '{"aiAnalysisEnabled": true}' \
+            --fail-with-body || echo '{"error": "API call failed"}')
+            
+          # Print the full response for debugging
+          echo "Raw API response: $RESPONSE"
           
-          # Extract the request_id and status_url
-          REQUEST_ID=$(echo $RESPONSE | jq -r '.request_id')
-          STATUS_URL=$(echo $RESPONSE | jq -r '.status_url')
+          # Check if response contains an error
+          if [[ "$(echo $RESPONSE | jq 'has("error")')" == "true" ]]; then
+            echo "Error in API response. Exiting."
+            exit 1
+          fi
+          
+          # Extract the request_id and status_url with error checking
+          REQUEST_ID=$(echo $RESPONSE | jq -r '.request_id // "missing_request_id"')
+          STATUS_URL=$(echo $RESPONSE | jq -r '.status_url // "missing_status_url"')
+          
+          # Validate extracted values
+          if [[ "$REQUEST_ID" == "missing_request_id" || "$REQUEST_ID" == "null" ]]; then
+            echo "Failed to extract request_id from response"
+            exit 1
+          fi
+          
+          if [[ "$STATUS_URL" == "missing_status_url" || "$STATUS_URL" == "null" ]]; then
+            echo "Failed to extract status_url from response"
+            exit 1
+          fi
           
           # Save these values to environment variables for the next step
           echo "REQUEST_ID=$REQUEST_ID" >> $GITHUB_ENV
