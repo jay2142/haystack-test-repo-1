@@ -22,7 +22,7 @@ jobs:
           echo "PR number: $PR_NUMBER"
           
           # Make the initial API call with explicit error output
-          echo "Making API call to: https://8z9ssbamdj.execute-api.us-west-2.amazonaws.com/prod/${REPO_OWNER}/${REPO_NAME}/${PR_NUMBER}"
+          echo "Making API call to: https://8z9ssbamdj.execute-api.us-west-2.amazonaws.com/prod/${REPO_OWNER}/${REPO_NAME}/pull/${PR_NUMBER}"
           RESPONSE=$(curl -s -X POST \
             "https://8z9ssbamdj.execute-api.us-west-2.amazonaws.com/prod/${REPO_OWNER}/${REPO_NAME}/${PR_NUMBER}" \
             -H "Content-Type: application/json" \
