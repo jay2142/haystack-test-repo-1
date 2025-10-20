@@ -18,11 +18,14 @@ class Matrix:
             ValueError: If rows have inconsistent lengths
         """
         if not data or not data[0]:
-            raise ValueError("Matrix cannot be empty")
+            raise ValueError("Matrix cannot be empty - provide at least a 1x1 matrix")
 
         row_length = len(data[0])
         if not all(len(row) == row_length for row in data):
-            raise ValueError("All rows must have the same length")
+            row_lengths = [len(row) for row in data]
+            raise ValueError(
+                f"All rows must have the same length. Got varying lengths: {row_lengths}"
+            )
 
         self.data = [row[:] for row in data]  # Deep copy
         self.rows = len(data)
@@ -61,7 +64,10 @@ class Matrix:
             ValueError: If matrices have different dimensions
         """
         if self.rows != other.rows or self.cols != other.cols:
-            raise ValueError("Matrices must have same dimensions for addition")
+            raise ValueError(
+                f"Matrices must have same dimensions for addition. "
+                f"Got {self.rows}x{self.cols} and {other.rows}x{other.cols}"
+            )
 
         result = []
         for i in range(self.rows):
@@ -86,7 +92,10 @@ class Matrix:
             ValueError: If matrices have different dimensions
         """
         if self.rows != other.rows or self.cols != other.cols:
-            raise ValueError("Matrices must have same dimensions for subtraction")
+            raise ValueError(
+                f"Matrices must have same dimensions for subtraction. "
+                f"Got {self.rows}x{self.cols} and {other.rows}x{other.cols}"
+            )
 
         result = []
         for i in range(self.rows):

@@ -14,7 +14,8 @@ from .utils import (
     zero_matrix,
     is_square,
     determinant,
-    transpose
+    transpose,
+    inverse
 )
 
 __all__ = [
@@ -29,7 +30,8 @@ __all__ = [
     'zero_matrix',
     'is_square',
     'determinant',
-    'transpose'
+    'transpose',
+    'inverse'
 ]
 
 __version__ = '1.0.0'

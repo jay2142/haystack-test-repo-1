@@ -9,7 +9,8 @@ from matrix.transforms import (
 )
 from matrix.utils import (
     identity_matrix, zero_matrix, is_square, determinant,
-    transpose, trace, frobenius_norm, apply_to_vector, apply_to_points
+    transpose, trace, frobenius_norm, apply_to_vector, apply_to_points,
+    inverse
 )
 
 
@@ -206,6 +207,43 @@ class TestUtils(unittest.TestCase):
         result = apply_to_points(m, points)
         expected = [[2, 2], [4, 6], [8, 10]]
         self.assertEqual(result, expected)
+
+    def test_inverse_2x2(self):
+        """Test inverse of a 2x2 matrix."""
+        m = Matrix([[1, 2], [3, 4]])
+        inv = inverse(m)
+        # Check that M * M^-1 = I
+        result = m * inv
+        identity = identity_matrix(2)
+        for i in range(2):
+            for j in range(2):
+                self.assertAlmostEqual(result.get(i, j), identity.get(i, j), places=10)
+
+    def test_inverse_3x3(self):
+        """Test inverse of a 3x3 matrix."""
+        m = Matrix([[1, 0, 2], [0, 1, 0], [1, 1, 1]])
+        inv = inverse(m)
+        # Check that M * M^-1 = I
+        result = m * inv
+        identity = identity_matrix(3)
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(result.get(i, j), identity.get(i, j), places=10)
+
+    def test_inverse_singular_raises(self):
+        """Test that inverting a singular matrix raises ValueError."""
+        # Singular matrix (determinant = 0)
+        m = Matrix([[1, 2], [2, 4]])
+        with self.assertRaises(ValueError) as context:
+            inverse(m)
+        self.assertIn("singular", str(context.exception).lower())
+
+    def test_inverse_non_square_raises(self):
+        """Test that inverting a non-square matrix raises ValueError."""
+        m = Matrix([[1, 2, 3], [4, 5, 6]])
+        with self.assertRaises(ValueError) as context:
+            inverse(m)
+        self.assertIn("square", str(context.exception).lower())
 
 
 class TestIntegration(unittest.TestCase):

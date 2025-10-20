@@ -167,6 +167,71 @@ def frobenius_norm(matrix: Matrix) -> float:
     return sum_of_squares ** 0.5
 
 
+def inverse(matrix: Matrix) -> Matrix:
+    """
+    Compute the inverse of a square matrix using Gauss-Jordan elimination.
+
+    Args:
+        matrix: Square matrix to invert
+
+    Returns:
+        Inverse matrix
+
+    Raises:
+        ValueError: If matrix is not square or is singular (non-invertible)
+    """
+    if not is_square(matrix):
+        raise ValueError(
+            f"Matrix inverse only defined for square matrices. "
+            f"Got {matrix.rows}x{matrix.cols} matrix"
+        )
+
+    n = matrix.rows
+    det = determinant(matrix)
+
+    if abs(det) < 1e-10:
+        raise ValueError(
+            f"Matrix is singular (determinant={det:.2e}) and cannot be inverted"
+        )
+
+    # Create augmented matrix [A | I]
+    augmented = []
+    for i in range(n):
+        row = matrix.data[i][:] + [1.0 if i == j else 0.0 for j in range(n)]
+        augmented.append(row)
+
+    # Perform Gauss-Jordan elimination
+    for i in range(n):
+        # Find pivot
+        max_row = i
+        for k in range(i + 1, n):
+            if abs(augmented[k][i]) > abs(augmented[max_row][i]):
+                max_row = k
+        augmented[i], augmented[max_row] = augmented[max_row], augmented[i]
+
+        # Make diagonal element 1
+        pivot = augmented[i][i]
+        if abs(pivot) < 1e-10:
+            raise ValueError("Matrix is singular and cannot be inverted")
+
+        for j in range(2 * n):
+            augmented[i][j] /= pivot
+
+        # Eliminate column
+        for k in range(n):
+            if k != i:
+                factor = augmented[k][i]
+                for j in range(2 * n):
+                    augmented[k][j] -= factor * augmented[i][j]
+
+    # Extract inverse matrix from augmented matrix
+    inverse_data = []
+    for i in range(n):
+        inverse_data.append(augmented[i][n:])
+
+    return Matrix(inverse_data)
+
+
 def apply_to_vector(matrix: Matrix, vector: List[float]) -> List[float]:
     """
     Apply a matrix transformation to a vector.
