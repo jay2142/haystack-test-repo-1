@@ -16,7 +16,9 @@ from .operations import (
     multiply_matrices,
     dot_product,
     trace,
-    determinant
+    determinant,
+    is_invertible,
+    matrix_inverse
 )
 from .transforms import (
     rotation_matrix_2d,
@@ -56,6 +58,8 @@ __all__ = [
     'dot_product',
     'trace',
     'determinant',
+    'is_invertible',
+    'matrix_inverse',
     'rotation_matrix_2d',
     'scaling_matrix',
     'translation_matrix',

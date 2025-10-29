@@ -5,7 +5,8 @@ import math
 from matrix_lib import Matrix
 from matrix_lib.operations import (
     add_matrices, subtract_matrices, multiply_matrices,
-    dot_product, matrix_norm, trace, determinant
+    dot_product, matrix_norm, trace, determinant,
+    is_invertible, matrix_inverse
 )
 from matrix_lib.transforms import (
     rotation_matrix_2d, scaling_matrix, translation_matrix,
@@ -212,6 +213,87 @@ class TestAlgorithms(unittest.TestCase):
         # Rank deficient matrix
         m2 = Matrix([[1, 2], [2, 4]])
         self.assertEqual(rank(m2), 1)
+
+
+class TestMatrixInverse(unittest.TestCase):
+    """Test matrix inverse operations."""
+
+    def test_is_invertible_true(self):
+        """Test invertibility check for invertible matrix."""
+        m = Matrix([[1, 2], [3, 4]])
+        self.assertTrue(is_invertible(m))
+
+    def test_is_invertible_false(self):
+        """Test invertibility check for singular matrix."""
+        m = Matrix([[1, 2], [2, 4]])
+        self.assertFalse(is_invertible(m))
+
+    def test_identity_inverse(self):
+        """Test inverse of identity matrix is itself."""
+        I = Matrix.identity(3)
+        I_inv = matrix_inverse(I)
+
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(I_inv[i, j], I[i, j], places=10)
+
+    def test_inverse_2x2(self):
+        """Test 2x2 matrix inverse."""
+        A = Matrix([[1, 2], [3, 4]])
+        A_inv = matrix_inverse(A)
+
+        # Verify A * A_inv = I
+        I = A * A_inv
+        self.assertAlmostEqual(I[0, 0], 1, places=10)
+        self.assertAlmostEqual(I[0, 1], 0, places=10)
+        self.assertAlmostEqual(I[1, 0], 0, places=10)
+        self.assertAlmostEqual(I[1, 1], 1, places=10)
+
+    def test_inverse_3x3(self):
+        """Test 3x3 matrix inverse."""
+        A = Matrix([[1, 2, 3], [0, 1, 4], [5, 6, 0]])
+        A_inv = matrix_inverse(A)
+
+        # Verify A * A_inv = I
+        I = A * A_inv
+        identity = Matrix.identity(3)
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(I[i, j], identity[i, j], places=10)
+
+    def test_inverse_symmetric(self):
+        """Test inverse of symmetric matrix."""
+        A = Matrix([[4, 1], [1, 3]])
+        A_inv = matrix_inverse(A)
+
+        # Verify A * A_inv = I
+        I = A * A_inv
+        self.assertAlmostEqual(I[0, 0], 1, places=10)
+        self.assertAlmostEqual(I[0, 1], 0, places=10)
+        self.assertAlmostEqual(I[1, 0], 0, places=10)
+        self.assertAlmostEqual(I[1, 1], 1, places=10)
+
+    def test_inverse_times_inverse(self):
+        """Test (A^-1)^-1 = A."""
+        A = Matrix([[2, 3], [1, 4]])
+        A_inv = matrix_inverse(A)
+        A_inv_inv = matrix_inverse(A_inv)
+
+        for i in range(2):
+            for j in range(2):
+                self.assertAlmostEqual(A_inv_inv[i, j], A[i, j], places=9)
+
+    def test_singular_matrix_error(self):
+        """Test that inverting singular matrix raises error."""
+        m = Matrix([[1, 2], [2, 4]])
+        with self.assertRaises(ValueError):
+            matrix_inverse(m)
+
+    def test_non_square_error(self):
+        """Test that inverting non-square matrix raises error."""
+        m = Matrix([[1, 2, 3], [4, 5, 6]])
+        with self.assertRaises(ValueError):
+            matrix_inverse(m)
 
 
 class TestIntegration(unittest.TestCase):

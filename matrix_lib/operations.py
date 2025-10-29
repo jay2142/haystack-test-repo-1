@@ -2,6 +2,7 @@
 
 from typing import List
 from .matrix import Matrix
+from .algorithms import solve_linear_system
 
 
 def add_matrices(a: Matrix, b: Matrix) -> Matrix:
@@ -160,3 +161,67 @@ def determinant(matrix: Matrix) -> float:
         det += cofactor
 
     return det
+
+
+def is_invertible(matrix: Matrix) -> bool:
+    """
+    Check if a matrix is invertible.
+
+    Args:
+        matrix: Square matrix to check
+
+    Returns:
+        True if matrix is invertible, False otherwise
+
+    Raises:
+        ValueError: If matrix is not square
+    """
+    if not matrix.is_square():
+        raise ValueError(
+            f"Invertibility check requires square matrix, got {matrix.shape}"
+        )
+
+    det = determinant(matrix)
+    return abs(det) > 1e-10
+
+
+def matrix_inverse(matrix: Matrix) -> Matrix:
+    """
+    Compute the inverse of a square matrix.
+
+    Uses Gaussian elimination to solve AX = I column by column,
+    where X is the inverse matrix.
+
+    Args:
+        matrix: Square matrix to invert
+
+    Returns:
+        Inverse matrix A^(-1)
+
+    Raises:
+        ValueError: If matrix is not square or is singular
+    """
+    if not matrix.is_square():
+        raise ValueError(
+            f"Matrix inverse requires square matrix, got {matrix.shape}"
+        )
+
+    if not is_invertible(matrix):
+        raise ValueError("Matrix is singular and cannot be inverted")
+
+    n = matrix.rows
+
+    # Solve Ax = e_i for each column of the identity matrix
+    inverse_data = []
+    for i in range(n):
+        # Create i-th column of identity matrix
+        e_i = [0.0] * n
+        e_i[i] = 1.0
+
+        # Solve for i-th column of inverse
+        col = solve_linear_system(matrix, e_i)
+        inverse_data.append(col)
+
+    # Transpose to get inverse (we computed columns as rows)
+    inverse_transposed = Matrix(inverse_data)
+    return inverse_transposed.transpose()
