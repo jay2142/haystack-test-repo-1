@@ -5,7 +5,11 @@ from typing import List, Union
 
 
 class Matrix:
-    """A matrix class supporting basic matrix operations."""
+    """A matrix class supporting basic matrix operations.
+
+    This class provides comprehensive matrix functionality including
+    arithmetic operations, transformations, and utility methods.
+    """
 
     def __init__(self, data: List[List[float]]):
         """
