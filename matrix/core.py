@@ -40,7 +40,7 @@ class Matrix:
         return f"Matrix({self.data})"
 
     def __str__(self) -> str:
-        """Pretty print the matrix."""
+        """Pretty print the matrix in a human-readable format."""
         max_width = max(len(f"{val:.2f}") for row in self.data for val in row)
         lines = []
         for row in self.data:
