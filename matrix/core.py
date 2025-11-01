@@ -36,7 +36,7 @@ class Matrix:
         self.cols = len(data[0])
 
     def __repr__(self) -> str:
-        """String representation of the matrix."""
+        """Return a string representation of the matrix for debugging."""
         return f"Matrix({self.data})"
 
     def __str__(self) -> str:
