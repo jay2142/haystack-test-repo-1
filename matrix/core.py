@@ -49,7 +49,7 @@ class Matrix:
         return "\n".join(lines)
 
     def __eq__(self, other: 'Matrix') -> bool:
-        """Check if two matrices are equal."""
+        """Check if two matrices are equal by comparing their data."""
         if not isinstance(other, Matrix):
             return False
         return self.data == other.data
