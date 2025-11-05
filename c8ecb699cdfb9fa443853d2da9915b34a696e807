@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4564419_ddca5baf",
+        "filename": "b2.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1039067
+      },
+      "writtenOn": "2025-11-05T00:02:34Z",
+      "side": 1,
+      "message": "Leaving a comment, to test Gerrit commenting",
+      "revId": "c8ecb699cdfb9fa443853d2da9915b34a696e807",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
