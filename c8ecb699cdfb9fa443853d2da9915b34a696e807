@@ -16,6 +16,23 @@
       "message": "Leaving a comment, to test Gerrit commenting",
       "revId": "c8ecb699cdfb9fa443853d2da9915b34a696e807",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5bea29d7_7a03714f",
+        "filename": "b2.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1039067
+      },
+      "writtenOn": "2025-11-05T00:03:24Z",
+      "side": 1,
+      "message": "Another comment, right on the changed line",
+      "revId": "c8ecb699cdfb9fa443853d2da9915b34a696e807",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
